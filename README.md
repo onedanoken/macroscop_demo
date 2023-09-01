@@ -8,3 +8,5 @@
 2.	Запрос видео
 Пример: http://demo.macroscop.com:8080/mobile?login=root&channelid=2016897c-8be5-4a80-b1a3-7f79a9ec729c&resolutionX=640&resolutionY=480&fps=25
 В ответ на запрос сервер будет возвращать видео с камеры в формате MJPEG, имеющей идентификатор, заданный в параметре channelid.  Просмотреть видео из примера возможно с помощью программы VLC Player (http://www.videolan.org/).
+
+# Установка и запуск приложения
