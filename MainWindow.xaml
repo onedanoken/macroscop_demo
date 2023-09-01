@@ -1,0 +1,21 @@
+﻿<Window x:Class="VideoCaptureApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VideoCaptureApplication"
+        mc:Ignorable="d"
+        Title="Macroscop Demo" Height="600" Width="1000"
+        Closing="MainWindow_Closing">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1469*"/>
+            <ColumnDefinition Width="131*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="elements" Margin="10,125,713,236" Background="#FFF1CECE" SelectionChanged="ChangeCamera" />
+        <Image x:Name="Cadr" Margin="229,32,21,32" Grid.ColumnSpan="2" RenderTransformOrigin="0.498,0.526"  />
+        <TextBox x:Name="TextBox" Text="  Выберите камеру для просмотра" FontSize="24" Foreground="Black"
+                 Margin="383,218,85,292" IsReadOnly="True" BorderBrush="White"/>
+
+    </Grid>
+</Window>
