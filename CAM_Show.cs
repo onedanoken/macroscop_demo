@@ -52,7 +52,7 @@ namespace VideoCaptureApplication
         {
             string videoUrl = GetHttpRequest(Id);
             WebRequest request = WebRequest.Create(videoUrl);
-            request.Timeout = 1000;
+            request.Timeout = 10000;
             WebResponse response;
             try
             {
