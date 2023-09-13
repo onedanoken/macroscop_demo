@@ -13,9 +13,11 @@
             <ColumnDefinition Width="131*"/>
         </Grid.ColumnDefinitions>
         <ListBox x:Name="elements" Margin="10,125,713,236" Background="#FFF1CECE" SelectionChanged="ChangeCamera" />
-        <Image x:Name="Cadr" Margin="229,32,21,32" Grid.ColumnSpan="2" RenderTransformOrigin="0.498,0.526"  />
+        <ListBox x:Name="archive" Margin="737,60,10,44" Background="#FFF1CECE" Grid.ColumnSpan="2" SelectionChanged="archive_SelectionChanged" />
+        <Image x:Name="Cadr" Margin="243,29,243,177" RenderTransformOrigin="0.498,0.526"  />
         <TextBox x:Name="TextBox" Text="  Выберите камеру для просмотра" FontSize="24" Foreground="Black"
-                 Margin="383,218,85,292" IsReadOnly="True" BorderBrush="White"/>
-
+                 Margin="275,200,193,310" IsReadOnly="True" BorderBrush="White"/>
+        <TextBox x:Name="ArchiveBox" Text="Архив" FontSize="16" Foreground="Black"
+                 Margin="737,10,78,529" IsReadOnly="True" BorderBrush="White"/>
     </Grid>
 </Window>

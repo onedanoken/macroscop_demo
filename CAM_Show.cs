@@ -8,6 +8,10 @@ using System.Xml.Linq;
 using System.Drawing;
 using System.Windows;
 
+// Понять, как можно получить кадры за прошедший час
+// Воспользоваться готовым функционалом
+// По хорошему бы еще найти запрос для получения видоса
+
 namespace VideoCaptureApplication
 {
     public class CAM_Show : CAM_Client
@@ -33,13 +37,18 @@ namespace VideoCaptureApplication
             return $"{server_url}mobile?login={login}&channelid={id}&resolutionX={resolutionX}&resolutionY={resolutionY}&fps={fps}";
         }
 
-        public void StartTranslation()
+        private static string GetArchiveUrl(string id, DateTime? time_in, string login="root", int resolutionX = 640, int resolutionY = 480, int fps = 25, string mode = "archive")
+        {
+            return $"{server_url}mobile?login={login}&channelid={id}&resolutionX={resolutionX}&resolutionY={resolutionY}&fps={fps}&mode={mode}&starttime={time_in}";
+        }
+
+        public void StartTranslation(bool flag = false, DateTime? time_in = null) // true - archive, false - IRT
         {
             StopTranslation();
             sourceToken = new CancellationTokenSource();
             var token = sourceToken.Token;
 
-            Task.Run(() => GetCameraTranslationResponse(token));  
+            Task.Run(() => GetCameraTranslationResponse(token, flag, time_in));  
         }
 
         public void StopTranslation()
@@ -48,15 +57,20 @@ namespace VideoCaptureApplication
                 sourceToken.Cancel();
         }
 
-        private async Task GetCameraTranslationResponse(CancellationToken token)
+        private async Task GetCameraTranslationResponse(CancellationToken token, bool flag, DateTime? time_in)
         {
-            string videoUrl = GetHttpRequest(Id);
-            WebRequest request = WebRequest.Create(videoUrl);
-            request.Timeout = 1000;
-            WebResponse response;
+            string videoUrl;
+            if (!flag)
+                videoUrl = GetHttpRequest(Id);
+            else
+                videoUrl = GetArchiveUrl(Id, time_in);
+            WebRequest request_camera = WebRequest.Create(videoUrl);
+            if (!flag)
+                request_camera.Timeout = 10000;
+            WebResponse response_camera;
             try
             {
-                response = await request.GetResponseAsync();
+                response_camera = await request_camera.GetResponseAsync();
             }
             catch (WebException e)
             {
@@ -64,7 +78,7 @@ namespace VideoCaptureApplication
                 return;
             }
 
-            await CameraProcessing(response, token);
+            await CameraProcessing(response_camera, token);
         }
 
         private async Task CameraProcessing(WebResponse response, CancellationToken token)

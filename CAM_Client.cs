@@ -5,8 +5,30 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+
 namespace VideoCaptureApplication
 {
+    public class ArchiveClient
+    {
+        public string? ArchiveId { get; set; }
+        public DateTime time_from { get; set; }
+        public DateTime time_to { get; set; }
+
+        public ArchiveClient()
+        {
+            this.ArchiveId = null;
+            this.time_from = DateTime.MinValue;
+            this.time_to = DateTime.MinValue;
+        }
+
+        public ArchiveClient(XElement archiveInfoElement, XNamespace ns)
+        {
+            this.ArchiveId = archiveInfoElement.Element(ns + "Id")?.Value;
+            this.time_from = Convert.ToDateTime(archiveInfoElement.Element(ns + "FromTime")?.Value);
+            this.time_to = Convert.ToDateTime(archiveInfoElement.Element(ns + "ToTime")?.Value);
+        }
+    }
+
     public class CAM_Client
     {
         internal const string server_url = "http://demo.macroscop.com:8080/";
@@ -57,6 +79,11 @@ namespace VideoCaptureApplication
             return $"{server_url}configex?login={login}";
         }
 
+        private static string GetHttpRequestArchive(string id, string login = "root")
+        {
+            return $"{server_url}archivefragments?login={login}&channelid={id}&fromtime=12.09.2023%2003:49:51&totime=12.09.2023%2006:49:51&responsetype=xml";
+        }
+
         public static async Task<XDocument> GetCameras()
         {
             using (HttpClient client = new HttpClient())
@@ -93,6 +120,37 @@ namespace VideoCaptureApplication
         {
             XDocument xmlDoc = await GetCameras();
             return ParseXMLConfig(xmlDoc);
+        }
+
+        public static async Task<XDocument> GetArchiveFragments(string id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string archiveUrl = GetHttpRequestArchive(id);
+                var response = await client.GetAsync(archiveUrl);
+                var xmlContent = await response.Content.ReadAsStringAsync();
+                XDocument xDoc = XDocument.Parse(xmlContent);
+                return xDoc;
+            }
+        }
+
+        public static List<ArchiveClient> ParseXMLArchive(XDocument xmlDoc)
+        {
+            List<ArchiveClient> archives = new List<ArchiveClient>();
+            XNamespace ns = "http://www.macroscop.com";
+            var fragments = xmlDoc.Descendants(ns + "ArchiveFragment");
+            foreach (var fragment in fragments)
+            {
+                var element = new ArchiveClient(fragment, ns);
+                archives.Add(element);
+            }
+            return archives;
+        }
+
+        public static async Task<List<ArchiveClient>> GetArchiveInfo(string id)
+        {
+            XDocument xmlDoc = await GetArchiveFragments(id);
+            return ParseXMLArchive(xmlDoc);
         }
     }
 }
